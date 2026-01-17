@@ -14,8 +14,8 @@ const DataTable = <T,>({
   rowKey,
   tableClassName,
   headerClassName,
-  headerCellClassName,
   headerRowClassName,
+  headerCellClassName,
   bodyRowClassName,
   bodyCellClassName,
 }: DataTableProps<T>) => {
@@ -48,7 +48,11 @@ const DataTable = <T,>({
             {columns.map((column, columnIndex) => (
               <TableCell
                 key={columnIndex}
-                className={cn("py-4 first:pl-5 last:pr-5", bodyCellClassName)}
+                className={cn(
+                  "py-4 first:pl-5 last:pr-5",
+                  bodyCellClassName,
+                  column.cellClassName
+                )}
               >
                 {column.cell(row, rowIndex)}
               </TableCell>
