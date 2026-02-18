@@ -7,13 +7,33 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(
-  value: number,
-  currency: string = "USD",
-): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currency,
-  }).format(value);
+  value: number | null | undefined,
+  digits?: number,
+  currency?: string,
+  showSymbol?: boolean,
+) {
+  if (value === null || value === undefined || isNaN(value)) {
+    return showSymbol !== false ? "$0.00" : "0.00";
+  }
+
+  // Clamp to Intl.NumberFormat valid range: 0..20
+  const safeDigits = Number.isFinite(digits)
+    ? Math.min(20, Math.max(0, Math.trunc(digits as number)))
+    : 2;
+
+  if (showSymbol !== false) {
+    return value.toLocaleString(undefined, {
+      style: "currency",
+      currency: currency?.toUpperCase() || "USD",
+      minimumFractionDigits: safeDigits,
+      maximumFractionDigits: safeDigits,
+    });
+  }
+
+  return value.toLocaleString(undefined, {
+    minimumFractionDigits: safeDigits,
+    maximumFractionDigits: safeDigits,
+  });
 }
 
 export function convertOHLCData(data: OHLCData[]) {
@@ -86,3 +106,24 @@ export const buildPageNumbers = (
 
   return pages;
 };
+
+export function timeAgo(date: string | number | Date): string {
+  const now = new Date();
+  const past = new Date(date);
+  const diff = now.getTime() - past.getTime(); // difference in ms
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+
+  if (seconds < 60) return "just now";
+  if (minutes < 60) return `${minutes} min`;
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""}`;
+  if (days < 7) return `${days} day${days > 1 ? "s" : ""}`;
+  if (weeks < 4) return `${weeks} week${weeks > 1 ? "s" : ""}`;
+
+  // Format date as YYYY-MM-DD
+  return past.toISOString().split("T")[0];
+}
