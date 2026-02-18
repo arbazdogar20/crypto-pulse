@@ -22,13 +22,14 @@ const DataTable = <T,>({
   return (
     <Table className={cn("custom-scrollbar", tableClassName)}>
       <TableHeader className={headerClassName}>
-        <TableRow className={cn("hover:bg-transparent", headerRowClassName)}>
-          {columns.map((column, index) => (
+        <TableRow className={cn("hover:bg-transparent!", headerRowClassName)}>
+          {columns.map((column, i) => (
             <TableHead
-              key={index}
+              key={i}
               className={cn(
                 "bg-dark-400 text-purple-100 py-4 first:pl-5 last:pr-5",
-                headerCellClassName
+                headerCellClassName,
+                // column.headClassName,
               )}
             >
               {column.header}
@@ -41,8 +42,8 @@ const DataTable = <T,>({
           <TableRow
             key={rowKey(row, rowIndex)}
             className={cn(
-              "overflow-hidden rounded-lg border-b border-purple-100/5 hover:bg-dark-400/30!",
-              bodyRowClassName
+              "overflow-hidden rounded-lg border-b border-purple-100/5 hover:bg-dark-400/30! relative",
+              bodyRowClassName,
             )}
           >
             {columns.map((column, columnIndex) => (
@@ -51,7 +52,7 @@ const DataTable = <T,>({
                 className={cn(
                   "py-4 first:pl-5 last:pr-5",
                   bodyCellClassName,
-                  column.cellClassName
+                  column.cellClassName,
                 )}
               >
                 {column.cell(row, rowIndex)}
